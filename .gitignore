@@ -1,0 +1,105 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.next/
+.nuxt/
+
+# Environment files — NEVER commit these
+.env
+.env.local
+.env.*.local
+*.env.production
+
+# Turbo
+.turbo/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+
+# Docker volumes
+/data/
+volumes/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Flutter
+apps/mobile/.dart_tool/
+apps/mobile/.flutter-plugins
+apps/mobile/.flutter-plugins-dependencies
+apps/mobile/build/
+apps/mobile/ios/Pods/
+apps/mobile/android/local.properties
+apps/mobile/android/.gradle/
+
+# Certs (generate locally, never commit private keys)
+infra/mosquitto/certs/*.key
+infra/mosquitto/certs/*.pem
+!infra/mosquitto/certs/.gitkeep
+infra/nginx/certs/*.key
+infra/nginx/certs/*.crt
+infra/nginx/certs/*.pem
+!infra/nginx/certs/.gitkeep
+
+# Test coverage
+coverage/
+
+# Temp
+tmp/
+temp/
+
+# Private Service Code (folders exist but code is private)
+apps/ai-service/src
+apps/ai-service/app
+apps/auth-service/src
+apps/pet-service/src
+apps/feeding-service/src
+apps/notification-service/src
+apps/report-service/src
+apps/community-service/src
+apps/social-service/src
+apps/gateway/src
+apps/web/src
+apps/mobile/lib
+apps/mobile/android
+apps/mobile/ios
+
+# Keep only essential files in private service folders
+!apps/ai-service/.gitkeep
+!apps/auth-service/.gitkeep
+!apps/pet-service/.gitkeep
+!apps/feeding-service/.gitkeep
+!apps/notification-service/.gitkeep
+!apps/report-service/.gitkeep
+!apps/community-service/.gitkeep
+!apps/social-service/.gitkeep
+!apps/gateway/.gitkeep
+!apps/web/.gitkeep
+!apps/mobile/.gitkeep
+
+# Landing page (private)
+petcare-landing/
+
+# AI Service - Large datasets and models (exclude from git)
+apps/ai-service/data/
+apps/ai-service/mlruns/
+apps/ai-service/logs/

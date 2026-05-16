@@ -1,0 +1,133 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# PetCare IoT — Docker Compose (Public Repository)
+# Usage:  docker compose up -d
+# ─────────────────────────────────────────────────────────────────────────────
+# This compose file starts the infrastructure needed for the Telemetry Service.
+# Other services exist in the full platform but their code is not public.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # Infrastructure
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  mongodb:
+    image: mongo:7
+    container_name: petcare-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-petcare123}
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - petcare-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: petcare-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - petcare-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: petcare-mosquitto
+    restart: unless-stopped
+    ports:
+      - '1883:1883'
+      - '9001:9001'
+    volumes:
+      - ./infra/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto_data:/mosquitto/data
+    networks:
+      - petcare-net
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # Telemetry Service (:3003)
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  telemetry-service:
+    build:
+      context: .
+      dockerfile: apps/telemetry-service/Dockerfile.dev
+    container_name: petcare-telemetry
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3003
+      MONGODB_URI: mongodb://${MONGO_USERNAME:-admin}:${MONGO_PASSWORD:-petcare123}@mongodb:27017/petcare_telemetry?authSource=admin
+      REDIS_URL: redis://redis:6379
+      MQTT_URL: mqtt://mosquitto:1883
+      MQTT_USERNAME: ${MQTT_USERNAME:-}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_me}
+      DEVICE_API_KEY: ${DEVICE_API_KEY:-dev_device_key_change_me}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev_internal_secret_change_me}
+      ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000
+      ENABLE_SIMULATORS: "false"
+      ARCHIVAL_ENABLED: "false"
+    ports:
+      - '3003:3003'
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:3003/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - petcare-net
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # MongoDB UI (Dev only)
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: petcare-mongo-ui
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USERNAME:-admin}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD:-petcare123}
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME:-admin}:${MONGO_PASSWORD:-petcare123}@mongodb:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USER:-admin}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD:-petcare123}
+    ports:
+      - '8081:8081'
+    networks:
+      - petcare-net
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb_data:
+  redis_data:
+  mosquitto_data:
+
+networks:
+  petcare-net:
+    driver: bridge

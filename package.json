@@ -1,0 +1,56 @@
+{
+  "name": "esprit-pi-4iosys-2026-petcare",
+  "version": "1.0.0",
+  "description": "PetCare IoT - Intelligent Pet Monitoring Platform | PIDEV 4IoSyS | Esprit School of Engineering 2025-2026",
+  "private": true,
+  "workspaces": [
+    "apps/telemetry-service",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:build": "docker compose build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "prettier": "^3.2.5",
+    "turbo": "^2.9.6",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
+  "packageManager": "npm@10.8.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hazemzammit/Esprit-PI-4IoSyS-2026-PetCare.git"
+  },
+  "keywords": [
+    "esprit-school-of-engineering",
+    "academic-project",
+    "esprit-pidev",
+    "2025-2026",
+    "nodejs",
+    "mqtt",
+    "socketio",
+    "iot",
+    "telemetry",
+    "microservices",
+    "typescript",
+    "docker",
+    "petcare",
+    "esp32",
+    "raspberry-pi"
+  ],
+  "author": "Hazem Zammit - Esprit School of Engineering",
+  "license": "MIT"
+}

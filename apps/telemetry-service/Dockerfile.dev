@@ -1,0 +1,18 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy workspace root for monorepo resolution
+COPY package.json turbo.json ./
+COPY packages/ ./packages/
+COPY apps/telemetry-service/package.json ./apps/telemetry-service/
+
+RUN npm install --workspace=apps/telemetry-service
+
+COPY apps/telemetry-service/ ./apps/telemetry-service/
+
+WORKDIR /app/apps/telemetry-service
+
+EXPOSE 3003
+
+CMD ["npx", "ts-node", "--transpile-only", "server.ts"]

@@ -1,0 +1,48 @@
+{
+  "name": "@petcare/telemetry-service",
+  "version": "1.0.0",
+  "description": "Real-time telemetry data ingestion, MQTT bridge, and Socket.IO server for PetCare IoT",
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only --exit-child server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@petcare/shared-middleware": "*",
+    "@petcare/shared-types": "*",
+    "express": "^4.18.3",
+    "mongoose": "^8.2.2",
+    "jsonwebtoken": "^9.0.2",
+    "ioredis": "^5.3.2",
+    "mqtt": "^5.5.0",
+    "socket.io": "^4.7.4",
+    "axios": "^1.13.5",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "compression": "^1.7.4",
+    "morgan": "^1.10.0",
+    "dotenv": "^17.3.1"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.7.5",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.11.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "telemetry",
+    "mqtt",
+    "socketio",
+    "iot",
+    "realtime"
+  ],
+  "author": "Hazem Zammit - Esprit School of Engineering",
+  "license": "MIT"
+}
